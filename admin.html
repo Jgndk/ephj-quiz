@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Quiz NEO-FUGU® EPHJ 2026</title>
+  <style>
+    :root {
+      --primary:  #0D79C2;
+      --navy:     #012B5D;
+      --text:     #012B5D;
+      --muted:    #63799B;
+      --bg:       #F5F7F9;
+      --card:     #FFFFFF;
+      --border:   #D8E5E8;
+      --success:  #06C270;
+      --error:    #FF4961;
+      --warning:  #FFD538;
+      --font:     'Futura PT', 'Century Gothic', 'Trebuchet MS', Arial, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      min-height: 100vh;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 22px; border: none; border-radius: 2px;
+      font-family: var(--font); font-size: 15px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      cursor: pointer; transition: all .2s; min-height: 46px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #0E64C4; }
+    .btn-white { background: #fff; color: var(--navy); }
+    .btn-white:hover { background: #ddeeff; }
+    .btn-danger { background: #FDE4E4; color: #B04A41; }
+    .btn-danger:hover { background: #f5c6c6; }
+    .btn-ghost  { background: transparent; color: rgba(255,255,255,.65); font-size: 15px; }
+    .btn-ghost:hover { color: #fff; }
+    .btn-block  { width: 100%; }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy); color: #fff;
+      padding: 18px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .header-brand { font-size: 18px; font-weight: 900; letter-spacing: .1em; }
+    .header-title { font-size: 15px; opacity: .6; margin-top: 3px; }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ── MAIN ── */
+    main { padding: 32px 36px; }
+
+    /* ── STATS ── */
+    .stat-row { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    .stat-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 20px 28px; flex: 1; min-width: 140px;
+    }
+    .stat-value { font-size: 36px; font-weight: 900; color: var(--primary); line-height: 1; }
+    .stat-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 6px; }
+
+    .row-count { font-size: 15px; color: var(--muted); margin-bottom: 12px; }
+
+    /* ── TABLEAU ── */
+    .table-wrap {
+      overflow-x: auto; border-radius: 8px;
+      border: 1.5px solid var(--border); background: var(--card);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 17px; min-width: 700px; }
+    thead { position: sticky; top: 0; z-index: 1; }
+    th {
+      background: var(--navy); color: #fff;
+      padding: 13px 16px; text-align: left;
+      font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+      font-weight: 700; white-space: nowrap;
+      cursor: pointer; user-select: none;
+    }
+    th:hover { background: #1a3f6e; }
+    th.sorted-asc::after  { content: ' ↑'; opacity: .8; }
+    th.sorted-desc::after { content: ' ↓'; opacity: .8; }
+    th.no-sort { cursor: default; }
+    th.no-sort:hover { background: var(--navy); }
+    td {
+      padding: 13px 16px; border-bottom: 1px solid var(--border);
+      vertical-align: middle; font-size: 17px;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: var(--bg); }
+    tr:hover td { background: #e8f1f8; }
+    tr.hidden-row { display: none; }
+
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; border-radius: 50%;
+      font-weight: 900; font-size: 14px; color: #fff;
+    }
+    .chip-hi  { background: var(--success); }
+    .chip-mid { background: var(--warning); color: var(--navy); }
+    .chip-lo  { background: var(--error); }
+
+    .ok  { color: var(--success); font-weight: 700; }
+    .nok { color: var(--error); }
+
+    /* Bouton suppression de ligne */
+    .btn-del {
+      background: none; border: none; cursor: pointer;
+      color: #ccc; font-size: 18px; padding: 4px 8px;
+      border-radius: 4px; transition: color .15s, background .15s;
+      line-height: 1;
+    }
+    .btn-del:hover { color: var(--error); background: #FDE4E4; }
+
+    .empty {
+      text-align: center; padding: 80px 32px; color: var(--muted);
+    }
+    .empty-icon { font-size: 60px; margin-bottom: 16px; }
+    .empty p { font-size: 16px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(1,43,93,.45); z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border-radius: 12px;
+      padding: 40px 44px; max-width: 420px; width: 90%;
+      text-align: center; box-shadow: 0 8px 40px rgba(1,43,93,.2);
+    }
+    .modal-icon  { font-size: 48px; margin-bottom: 14px; }
+    .modal-title { font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 10px; }
+    .modal-msg   { font-size: 15px; color: var(--muted); line-height: 1.65; margin-bottom: 28px; }
+    .modal-btns  { display: flex; gap: 12px; justify-content: center; }
+
+    /* ── LOGIN OVERLAY ── */
+    #login-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--navy);
+      align-items: center; justify-content: center;
+    }
+    .login-card {
+      background: var(--card); border-radius: 12px;
+      padding: 48px 44px; width: 380px; text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,.3);
+    }
+    .login-icon  { font-size: 44px; margin-bottom: 16px; }
+    .login-title { font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 6px; }
+    .login-sub   { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+    .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; text-align: left; }
+    .login-field label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .login-field input {
+      padding: 13px 16px; border: 1.5px solid var(--border); border-radius: 4px;
+      font-family: var(--font); font-size: 16px; color: var(--text);
+      background: var(--bg); outline: none; width: 100%;
+      transition: border-color .2s;
+    }
+    .login-field input:focus { border-color: var(--primary); }
+    .login-error { color: #E46155; font-size: 14px; margin-bottom: 12px; display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN OVERLAY ═══════════ -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-icon">🔒</div>
+    <h1 class="login-title">Espace admin</h1>
+    <p class="login-sub">Quiz NEO-FUGU® — EPHJ 2026</p>
+    <div class="login-field">
+      <label>Mot de passe</label>
+      <input type="password" id="login-pwd" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter') submitLogin()">
+    </div>
+    <p id="login-error" class="login-error">Mot de passe incorrect</p>
+    <button class="btn btn-primary btn-block" onclick="submitLogin()">Accéder →</button>
+  </div>
+</div>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <div>
+    <div class="header-brand">NEO-FUGU® — Admin</div>
+    <div class="header-title">Quiz EPHJ 2026</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-white" onclick="exportCSV()">📥 Export CSV</button>
+    <button class="btn btn-danger" onclick="openClearModal()">🗑 Effacer tout</button>
+  </div>
+</header>
+
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<main>
+  <div class="stat-row" id="stats"></div>
+
+  <p class="row-count" id="row-count"></p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy(0)">#</th>
+          <th onclick="sortBy(1)">Date</th>
+          <th onclick="sortBy(2)">Prénom</th>
+          <th onclick="sortBy(3)">Nom</th>
+          <th onclick="sortBy(4)">Email</th>
+          <th onclick="sortBy(5)">Score</th>
+          <th class="no-sort">Supprimer</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ═══════════ MODAL EFFACER TOUT ═══════════ -->
+<div class="modal-overlay" id="clear-modal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h2 class="modal-title">Supprimer toutes les données ?</h2>
+    <p class="modal-msg">
+      Cette action est <strong>irréversible</strong>.<br>
+      Les <span id="modal-count">0</span> participations seront définitivement supprimées.
+    </p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" style="color:var(--muted)" onclick="closeClearModal()">Annuler</button>
+      <button class="btn btn-danger" onclick="confirmClear()">Supprimer tout</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL SUPPRIMER LIGNE ═══════════ -->
+<div class="modal-overlay" id="row-modal">
+  <div class="modal">
+    <div class="modal-icon">🗑</div>
+    <h2 class="modal-title">Supprimer cette participation ?</h2>
+    <p class="modal-msg" id="row-modal-msg"></p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" style="color:var(--muted)" onclick="closeRowModal()">Annuler</button>
+      <button class="btn btn-danger" onclick="confirmDeleteRow()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'quiz_neofugu';
+const PASSWORD     = 'NeoEPHJ2026';
+let _pendingDeleteId = null;
+
+/* ── AUTH ── */
+function checkLogin() {
+  if (sessionStorage.getItem('admin_auth') !== '1') {
+    document.getElementById('login-overlay').style.display = 'flex';
+  }
+}
+function submitLogin() {
+  if (document.getElementById('login-pwd').value === PASSWORD) {
+    sessionStorage.setItem('admin_auth', '1');
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('login-error').style.display = 'none';
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-pwd').value = '';
+    document.getElementById('login-pwd').focus();
+  }
+}
+
+/* ── DATA ── */
+function getData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveData(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+/* ── RENDER ── */
+let _sortCol = 0, _sortDir = -1; // par défaut : plus récent en premier
+
+function render() {
+  const data = getData();
+
+  /* stats */
+  const avg     = data.length ? (data.reduce((a,d) => a+d.score,0)/data.length).toFixed(1) : '—';
+  const winners = data.filter(d => d.score >= 4).length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-value">${data.length}</div>
+      <div class="stat-label">Participations</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${avg}<small style="font-size:16px">/8</small></div>
+      <div class="stat-label">Score moyen</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${winners}</div>
+      <div class="stat-label">Score ≥ 4 🎁</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${data.filter(d=>d.score===8).length}</div>
+      <div class="stat-label">Scores parfaits 🏆</div>
+    </div>
+  `;
+
+  /* tableau vide */
+  if (!data.length) {
+    document.getElementById('tbody').innerHTML = `
+      <tr><td colspan="7">
+        <div class="empty">
+          <div class="empty-icon">🐡</div>
+          <p>Aucune participation pour l'instant.</p>
+        </div>
+      </td></tr>`;
+    document.getElementById('row-count').textContent = '0 participation';
+    return;
+  }
+
+  const sorted = [...data].sort((a,b) => {
+    const va = rowVal(a, _sortCol), vb = rowVal(b, _sortCol);
+    return va < vb ? -_sortDir : va > vb ? _sortDir : 0;
+  });
+
+  document.getElementById('tbody').innerHTML = sorted.map((d, i) => {
+    const cls = d.score >= 6 ? 'chip-hi' : d.score >= 4 ? 'chip-mid' : 'chip-lo';
+    return `<tr data-id="${d.id}">
+      <td>${i+1}</td>
+      <td style="white-space:nowrap">${esc(d.date)}</td>
+      <td><strong>${esc(d.prenom)}</strong></td>
+      <td>${esc(d.nom)}</td>
+      <td>${esc(d.email)}</td>
+      <td><span class="chip ${cls}">${d.score}/8</span></td>
+      <td style="text-align:center">
+        <button class="btn-del" title="Supprimer" onclick="openRowModal(${d.id}, '${esc(d.prenom)} ${esc(d.nom)}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('row-count').textContent =
+    `${data.length} participation${data.length !== 1 ? 's' : ''}`;
+  updateSortIndicators();
+}
+
+function rowVal(d, col) {
+  return [d.id, d.date, d.prenom, d.nom, d.email, d.score][col] ?? '';
+}
+
+function sortBy(col) {
+  if (_sortCol === col) _sortDir *= -1;
+  else { _sortCol = col; _sortDir = 1; }
+  render();
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll('th:not(.no-sort)').forEach((th, i) => {
+    th.classList.remove('sorted-asc','sorted-desc');
+    if (i === _sortCol) th.classList.add(_sortDir === 1 ? 'sorted-asc' : 'sorted-desc');
+  });
+}
+
+
+/* ── SUPPRIMER UNE LIGNE ── */
+function openRowModal(id, name) {
+  _pendingDeleteId = id;
+  document.getElementById('row-modal-msg').innerHTML =
+    `<strong>${esc(name)}</strong> sera définitivement supprimé(e).`;
+  document.getElementById('row-modal').classList.add('open');
+}
+function closeRowModal() {
+  _pendingDeleteId = null;
+  document.getElementById('row-modal').classList.remove('open');
+}
+function confirmDeleteRow() {
+  if (_pendingDeleteId === null) return;
+  const updated = getData().filter(d => d.id !== _pendingDeleteId);
+  saveData(updated);
+  closeRowModal();
+  render();
+}
+
+/* ── EFFACER TOUT ── */
+function openClearModal() {
+  document.getElementById('modal-count').textContent = getData().length;
+  document.getElementById('clear-modal').classList.add('open');
+}
+function closeClearModal() {
+  document.getElementById('clear-modal').classList.remove('open');
+}
+function confirmClear() {
+  localStorage.removeItem(STORAGE_KEY);
+  closeClearModal();
+  render();
+}
+
+/* ── EXPORT CSV ── */
+function exportCSV() {
+  const data = getData();
+  if (!data.length) { alert('Aucune donnée à exporter.'); return; }
+
+  const heads = ['Date', 'Prénom', 'Nom', 'Email'];
+  const rows  = data.map(d => [d.date, d.prenom, d.nom, d.email]);
+
+  const csv = [heads, ...rows]
+    .map(r => r.map(c => `"${String(c??'').replace(/"/g,'""')}"`).join(','))
+    .join('\n');
+
+  const a = Object.assign(document.createElement('a'), {
+    href:     URL.createObjectURL(new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'})),
+    download: `participants-neofugu-${new Date().toISOString().split('T')[0]}.csv`,
+  });
+  a.click();
+}
+
+/* ── UTILS ── */
+function esc(s) {
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── INIT ── */
+checkLogin();
+render();
+</script>
+</body>
+</html>
