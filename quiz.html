@@ -159,6 +159,21 @@
     }
     .admin-trigger:hover { color: rgba(255,255,255,0.35); }
 
+    /* Logo dans les barres supérieures */
+    .topbar-logo-slot svg {
+      height: 26px;
+      width: auto;
+      display: block;
+    }
+    /* Icône SVG inline dans les boutons */
+    .icon-svg {
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
+      vertical-align: -1px;
+      margin-right: 5px;
+    }
+
     /* ══════════════════════════════════
        BARRE SUPÉRIEURE (hors accueil)
     ══════════════════════════════════ */
@@ -684,6 +699,12 @@
   </style>
 </head>
 <body>
+<!-- Icône maison FA (offline) -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <symbol id="icon-house" viewBox="0 0 576 512">
+    <path fill="currentColor" d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/>
+  </symbol>
+</svg>
 <div id="app">
 
   <!-- ═══════════════════════════════
@@ -718,8 +739,8 @@
   ═══════════════════════════════ -->
   <div id="screen-contact" class="screen">
     <div class="top-bar">
-      <span class="top-bar-logotext">NEO-FUGU®</span>
-      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
+      <span class="topbar-logo-slot"></span>
+      <button class="top-bar-home" onclick="resetAll()"><svg class="icon-svg" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#icon-house"/></svg>Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -767,8 +788,8 @@
   ═══════════════════════════════ -->
   <div id="screen-q1" class="screen">
     <div class="top-bar">
-      <span class="top-bar-logotext">NEO-FUGU®</span>
-      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
+      <span class="topbar-logo-slot"></span>
+      <button class="top-bar-home" onclick="resetAll()"><svg class="icon-svg" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#icon-house"/></svg>Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -813,8 +834,8 @@
   ═══════════════════════════════ -->
   <div id="screen-q2" class="screen">
     <div class="top-bar">
-      <span class="top-bar-logotext">NEO-FUGU®</span>
-      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
+      <span class="topbar-logo-slot"></span>
+      <button class="top-bar-home" onclick="resetAll()"><svg class="icon-svg" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#icon-house"/></svg>Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -858,8 +879,8 @@
   ═══════════════════════════════ -->
   <div id="screen-q3" class="screen">
     <div class="top-bar">
-      <span class="top-bar-logotext">NEO-FUGU®</span>
-      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
+      <span class="topbar-logo-slot"></span>
+      <button class="top-bar-home" onclick="resetAll()"><svg class="icon-svg" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#icon-house"/></svg>Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -894,8 +915,8 @@
   ═══════════════════════════════ -->
   <div id="screen-q4" class="screen">
     <div class="top-bar">
-      <span class="top-bar-logotext">NEO-FUGU®</span>
-      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
+      <span class="topbar-logo-slot"></span>
+      <button class="top-bar-home" onclick="resetAll()"><svg class="icon-svg" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#icon-house"/></svg>Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -1291,6 +1312,16 @@ function clearData() {
    INIT
 ──────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  const srcSVG = document.querySelector('.welcome-logo svg');
+  if (srcSVG) {
+    document.querySelectorAll('.topbar-logo-slot').forEach(el => {
+      const logo = srcSVG.cloneNode(true);
+      logo.style.cssText = 'height:26px;width:auto';
+      logo.setAttribute('aria-label', 'NEO-FUGU®');
+      logo.querySelector('path').setAttribute('fill', '#012B5D');
+      el.appendChild(logo);
+    });
+  }
   buildQ3();
   if (location.hash === '#admin') openAdmin();
 });
