@@ -165,6 +165,7 @@
     .top-bar {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 16px 40px 0;
       flex-shrink: 0;
     }
@@ -177,6 +178,28 @@
       letter-spacing: 0.1em;
       color: var(--navy);
     }
+    .top-bar-home {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 4px 8px;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s;
+    }
+    .top-bar-home:hover { color: var(--primary); }
+
+    .footer-row {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-row .btn-outline { flex-shrink: 0; }
+    .footer-row .btn-primary { flex: 1; }
 
     /* ══════════════════════════════════
        CONTENEUR CENTRÉ (formulaire)
@@ -358,6 +381,10 @@
     #q2-group {
       grid-template-columns: 1fr 1fr;
       max-width: 480px;
+    }
+    /* Q1 : 3 options côte à côte */
+    #q1-group {
+      grid-template-columns: 1fr 1fr 1fr;
     }
     /* Q4 : 3 options */
     #q4-group {
@@ -692,6 +719,7 @@
   <div id="screen-contact" class="screen">
     <div class="top-bar">
       <span class="top-bar-logotext">NEO-FUGU®</span>
+      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -726,9 +754,10 @@
       </div>
 
       <div class="screen-footer">
-        <button class="btn btn-primary btn-block" onclick="validateContact()">
-          Suivant →
-        </button>
+        <div class="footer-row">
+          <button class="btn btn-outline" onclick="goToScreen('welcome')">← Retour</button>
+          <button class="btn btn-primary" onclick="validateContact()">Suivant →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -739,6 +768,7 @@
   <div id="screen-q1" class="screen">
     <div class="top-bar">
       <span class="top-bar-logotext">NEO-FUGU®</span>
+      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -770,8 +800,10 @@
       </div>
 
       <div class="screen-footer">
-        <button id="btn-q1" class="btn btn-primary btn-block"
-                onclick="goToScreen('q2')" disabled>Suivant →</button>
+        <div class="footer-row">
+          <button class="btn btn-outline" onclick="goToScreen('contact')">← Retour</button>
+          <button id="btn-q1" class="btn btn-primary" onclick="goToScreen('q2')" disabled>Suivant →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -782,6 +814,7 @@
   <div id="screen-q2" class="screen">
     <div class="top-bar">
       <span class="top-bar-logotext">NEO-FUGU®</span>
+      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -812,8 +845,10 @@
       </div>
 
       <div class="screen-footer">
-        <button id="btn-q2" class="btn btn-primary btn-block"
-                onclick="goToScreen('q3')" disabled>Suivant →</button>
+        <div class="footer-row">
+          <button class="btn btn-outline" onclick="goToScreen('q1')">← Retour</button>
+          <button id="btn-q2" class="btn btn-primary" onclick="goToScreen('q3')" disabled>Suivant →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -824,6 +859,7 @@
   <div id="screen-q3" class="screen">
     <div class="top-bar">
       <span class="top-bar-logotext">NEO-FUGU®</span>
+      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -844,6 +880,7 @@
       <div id="q3-table"></div><!-- généré par JS -->
 
       <div class="q3-footer">
+        <button class="btn btn-outline" onclick="goToScreen('q2')">← Retour</button>
         <span class="q3-counter" id="q3-count"><strong>0</strong> / 5 associés</span>
         <button id="btn-q3" class="btn btn-primary" onclick="goToScreen('q4')" disabled>
           Suivant →
@@ -858,6 +895,7 @@
   <div id="screen-q4" class="screen">
     <div class="top-bar">
       <span class="top-bar-logotext">NEO-FUGU®</span>
+      <button class="top-bar-home" onclick="resetAll()">⌂ Accueil</button>
     </div>
     <div class="form-wrap">
       <div class="progress-wrapper">
@@ -889,10 +927,10 @@
       </div>
 
       <div class="screen-footer">
-        <button id="btn-q4" class="btn btn-primary btn-block"
-                onclick="submitQuiz()" disabled>
-          Valider mes réponses ✓
-        </button>
+        <div class="footer-row">
+          <button class="btn btn-outline" onclick="goToScreen('q3')">← Retour</button>
+          <button id="btn-q4" class="btn btn-primary" onclick="submitQuiz()" disabled>Valider mes réponses ✓</button>
+        </div>
       </div>
     </div>
   </div>
